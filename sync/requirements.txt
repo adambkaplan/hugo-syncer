@@ -1,0 +1,14 @@
+wget==3.2
+wheel>=0.36.0
+ruamel.yaml==0.16.12
+google-cloud-storage==1.23.0
+Jinja2==2.11.3
+google-auth==1.14.0
+urlopen==1.0.0
+markdown==3.1.1
+coverage==5.3
+flake8==3.8.3
+click>=7.1.2
+gitpython>=3.1.11
+gitdb-speedups>=0.1.0
+beautifulsoup4==4.9.3
