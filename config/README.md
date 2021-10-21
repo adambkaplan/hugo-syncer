@@ -17,13 +17,9 @@ repository: https://github.com/tektoncd/<component>
 docDirectory: docs
 # The link to the GitHub tag page.
 archive: https://github.com/tektoncd/<component>/tags
-# The tags (versions) of contents to sync.
-# Note that sync.py and related script reads tags in the order specified in
-# the following list; the first entry in tags will automatically become the
-# latest version of contents.
-# To add a new version, append to the list as below
-tags:
-- name: vX.Y.Z               # The first tag in the least is considered latest
+# The tag with content to sync.
+tag:
+  name: vX.Y.Z               
   displayName: vX.Y.Z
   folders:
     docs:
@@ -40,21 +36,9 @@ tags:
       exclude: ['not_in.md'] # optional, default value []
       header: <dict>         # optional, no header added if not set
         See https://www.docsy.dev/docs/adding-content/navigation/#section-menu
-- name: vX.Z.Z               # The first tag in the least is considered latest
-  displayName: vX.Z.Z
-  folders:
-    docs:
-      target: ''             # optional, default value ''
-      index: README.md       # optional, if _index.md exists
-      include: ['*.md']      # optional, default value ['*']
-      exclude: ['not_in.md'] # optional, default value []
-      header: <dict>         # optional, no header added if not set
-        See https://www.docsy.dev/docs/adding-content/navigation/#section-menu
 ```
 
 See `pipelines.yaml` for more inline instructions.
-These two YAML files control the synchronization/curation from the `tektoncd/pipeline`
-and `tektoncd/triggers` repositories respectively.
 
 The YAML files here are used by the scripts in `../sync`.
 

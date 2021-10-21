@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+# Copyright 2021 Adam B Kaplan
 # Copyright 2020 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +28,7 @@ import sync
 
 from sync import (
     doc_config, docs_from_tree, get_links, is_absolute_url,
-    is_fragment, get_tags, load_config, save_config,
+    is_fragment, get_tag, load_config, save_config,
     get_files_in_path, transform_link, transform_links_doc,
     transform_doc, transform_docs, read_front_matter)
 
@@ -138,19 +139,19 @@ class TestSync(unittest.TestCase):
         self.assertTrue(is_fragment(urlparse("#footer")))
         self.assertFalse(is_fragment(urlparse("www.google.com")))
 
-    def test_get_tags(self):
+    def test_get_tag(self):
         """ map a list of dictionaries to only
         have name, displayName feilds """
-        expected = [{'name': 'test_tag', 'displayName': 'test_display'}]
-        tags = {'tags': [
+        expected = {'name': 'test_tag', 'displayName': 'test_display'}
+        tag = {'tag':
             {
                 'name': 'test_tag',
                 'displayName': 'test_display',
                 'files': []
             },
-        ]}
+        }
 
-        self.assertEqual(get_tags(tags), expected)
+        self.assertEqual(get_tag(tag), expected)
 
     def test_load_save_config(self):
         """ convert a list of files into a list of dictionaries """
@@ -396,11 +397,11 @@ class TestSync(unittest.TestCase):
             'component': 'test',
             'repository': 'http://test.com/test',
             'docDirectory': 'docs',
-            'tags': [{
+            'tag': {
                 'name': self.tagname,
                 'displayName': self.tagname,
                 'folders': folders_config
-            }]
+            }
         }
         clones = {'http://test.com/test': self.gitrepo}
         sync.download_resources_to_project([test_component], clones)
