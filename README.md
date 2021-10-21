@@ -72,11 +72,10 @@ archive: https://github.com/tektoncd/foobar/tags
 #  displayName: v0.8.x
 #  files:
 #  - myfiles.md: myfiles.md
-tags:
-  # The name of the tag in the GitHub repository.
-- name: master
-  # The name to display on tekton.dev.
-  # sync.py will use this value in the version switcher and other places.
+tag:
+  # The name of the tag or branch in the GitHub repository.
+  name: master
+  # The name to display on the website
   displayName: master
   # Dict of folders to sync
   files:

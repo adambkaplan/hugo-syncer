@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+# Copyright 2021 Adam B Kaplan
 # Copyright 2020 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -323,30 +324,17 @@ def download_resources_to_project(yaml_list, clones):
             logging.error(f'No git clone found for {repository} in {clones}')
             sys.exit(1)
 
-        for index, tag in enumerate(entry['tags']):
-            logging.info(f'Syncing {component}@{tag["name"]}')
-            link_base_url = f'{repository}/tree/{tag["name"]}/'
-            if index == 0:
-                # first links belongs on the home page
-                base_path = f'/docs/{component}'.lower()
-                site_dir = f'{CONTENT_DIR}/{component}'
-                os.makedirs(site_dir, exist_ok=True)
-            else:
-                # the other links belong in the other versions a.k.a vault
-                base_path = f'/vault/{component}-{tag["displayName"]}'
-                site_dir = f'{VAULT_DIR}/{component}-{tag["displayName"]}'
-                os.makedirs(site_dir, exist_ok=True)
+        tag = entry['tag']
+        logging.info(f'Syncing {component}@{tag["name"]}')
+        link_base_url = f'{repository}/tree/{tag["name"]}/'
 
-            results = transform_docs(
-                git_repo=local_clone,
-                tag=tag['name'],
-                folders=tag['folders'],
-                site_folder=site_dir,
-                base_path=base_path,
-                base_url=link_base_url)
-            logging.debug(f'Finished syncing {component}@{tag["name"]}: ')
-            logging.debug(f'{results}')
+        base_path = f'/docs/{component}'.lower()
+        site_dir = f'{CONTENT_DIR}/{component}'
 
+        results = transform_docs(git_repo=local_clone, tag=tag['name'], folders=tag['folders'],
+                                 site_folder=site_dir, base_path=base_path, base_url=link_base_url)
+        logging.debug(f'Finished syncing {component}@{tag["name"]}: ')
+        logging.debug(f'{results}')
 
 def get_files_in_path(path, file_type):
     """ return a list of all the files in path that match the file_type """
@@ -388,25 +376,10 @@ def save_config(config):
             yaml.dump(c['content'], out)
 
 
-def get_tags(sync_config):
-    """ return a list of tags with, there name, and displayName """
-    tags = []
-    for tag in sync_config['tags']:
-        tags.append({'name': tag['name'], 'displayName': tag['displayName']})
-    return tags
-
-
-def get_versions(sync_configs):
-    """ return the list of all the versions and there tag, name, archive """
-    component_versions = []
-    for sync_config in sync_configs:
-        component_versions.append({
-            'name': sync_config['component'],
-            'tags': get_tags(sync_config),
-            'archive': sync_config['archive']
-        })
-    return component_versions
-
+def get_tag(sync_config):
+    """ returns the tag name and displayName"""
+    tag_data = sync_config['tag']
+    return {'name': tag_data['name'], 'displayName': tag_data['displayName']}
 
 def create_resource(dest_prefix, file, versions):
     """ create site resource based on the version and file """
@@ -471,12 +444,6 @@ def sync(config_folder, update_cache):
     clones = clone_repos(config, update_cache)
     # download resources from the clone cache
     download_resources_to_project(config, clones)
-    versions = get_versions(config)
-    # create version switcher script
-    create_resource(JS_ASSET_DIR, "version-switcher.js", versions)
-    # create index for vault
-    create_resource(VAULT_DIR, FOLDER_INDEX, versions)
-
 
 if __name__ == '__main__':
     sync()
